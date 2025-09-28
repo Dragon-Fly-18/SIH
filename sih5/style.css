@@ -1,0 +1,208 @@
+/* Basic body & text */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: rgba(27, 6, 112, 0.85);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loading-container {
+  text-align: center;
+}
+
+.title {
+  font-size: 2rem;
+  margin-bottom: 5px;
+  color: white;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: white;
+}
+
+/* Progress Bar */
+.progress-bar {
+  width: 80%;
+  height: 20px;
+  background: #dedbdb;
+  margin: 10px auto;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress {
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #4caf50, #8bc34a);
+  transition: width 0.3s;
+}
+
+/* Track + Train */
+.track-wrapper {
+  margin-top: 40px;
+  position: relative;
+  height: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  overflow: hidden;
+  width: 100%;
+}
+
+.track {
+  position: absolute;
+  bottom: 0;
+  width: 200%;
+  height: 12px;
+  background: repeating-linear-gradient(
+    to right,
+    #1f1a1a,
+    #333 40px,
+    #999 40px,
+    #999 80px
+  );
+  animation: moveTrack 4s linear;
+}
+
+@keyframes moveTrack {
+  from { transform: translateX(0); }
+  to { transform: translateX(-80px); }
+}
+
+/* Train movement */
+.train {
+  display: flex;
+  position: relative;
+  bottom: 12px;
+  animation: moveTrain 6s linear infinite;
+  flex-direction: row-reverse;
+}
+
+@keyframes moveTrain {
+  from { transform: translateX(-120%); }
+  to { transform: translateX(120%); }
+}
+
+/* Engine */
+.engine {
+  width: 180px;
+  height: 100px;
+  background: #1e1e1e;
+  margin-right: 8px;
+  border-radius: 10px 10px 6px 6px;
+  position: relative;
+}
+
+/* Engine features */
+.smokestack {
+  width: 20px;
+  height: 40px;
+  background: #333;
+  position: absolute;
+  top: -40px;
+  left: 20px;
+  border-radius: 4px;
+}
+
+.headlight {
+  width: 16px;
+  height: 16px;
+  background: yellow;
+  position: absolute;
+  top: 35px;
+  right: 5px;
+  border-radius: 50%;
+}
+
+.engine .windows {
+  position: absolute;
+  top: 20px;
+  left: 60px;
+}
+
+.engine .window {
+  width: 40px;
+  height: 40px;
+  background: #0b88a7;
+  border-radius: 5px;
+}
+
+/* Smoke animation */
+.smoke {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: rgba(200,200,200,0.7);
+  top: -50px;
+  left: 25px;
+  border-radius: 50%;
+  animation: smokeRise 2s linear infinite;
+}
+
+@keyframes smokeRise {
+  0% { transform: translateY(0) scale(0.5); opacity: 0.7; }
+  50% { transform: translateY(-30px) scale(0.8); opacity: 0.5; }
+  100% { transform: translateY(-60px) scale(1); opacity: 0; }
+}
+
+/* Coaches */
+.coach {
+  width: 160px;
+  height: 90px;
+  background: #666;
+  margin-right: 8px;
+  border-radius: 8px;
+  position: relative;
+}
+
+.last-coach {
+  background: #000;
+}
+
+.coach .windows {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
+}
+
+.coach .window {
+  width: 30px;
+  height: 30px;
+  background: #0b88a7;
+  border-radius: 4px;
+}
+
+/* Wheels */
+.wheel {
+  width: 22px;
+  height: 22px;
+  background: black;
+  border-radius: 50%;
+  position: absolute;
+  bottom: -11px;
+  animation: rotateWheel 1s linear infinite;
+}
+
+.wheel.left { left: 15px; }
+.wheel.right { right: 15px; }
+
+@keyframes rotateWheel {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Footer */
+.footer {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+}
+
+

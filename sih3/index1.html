@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kochi Metro Scheduling System</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to top, #0f0c29, #302b63, #24243e);
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh; /* full height */
+    }
+
+    .title {
+      font-size: 2rem;
+      margin-bottom: 5px;
+      text-align: center;
+      color: white;
+    }
+    .subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      text-align: center;
+      color: white;
+    }
+
+    .progress-bar {
+      width: 80%;
+      height: 20px;
+      background: #dedbdb;
+      margin: 10px auto;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .progress {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, #2196f3, #00e5ff);
+      transition: width 0.3s;
+    }
+    #loading-text {
+      color: white;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .sky {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -3;
+    }
+    .cloud {
+      position: absolute;
+      background: #fff;
+      width: 120px;
+      height: 50px;
+      border-radius: 60px;
+      opacity: 0.15;
+      animation: cloudMove linear infinite;
+    }
+    .cloud:nth-child(1) { top: 20%; left: -150px; animation-duration: 80s; }
+    .cloud:nth-child(2) { top: 35%; left: -200px; animation-duration: 100s; }
+    .cloud:nth-child(3) { top: 50%; left: -250px; animation-duration: 120s; }
+
+    @keyframes cloudMove {
+      from { transform: translateX(0); }
+      to { transform: translateX(200vw); }
+    }
+
+    .city-skyline {
+      position: absolute;
+      bottom: 50px;
+      width: 100%;
+      height: 150px;
+      background: linear-gradient(to top, #111, transparent);
+      z-index: -2;
+    }
+    .building {
+      position: absolute;
+      bottom: 0;
+      width: 20px;
+      height: 60px;
+      background: #222;
+    }
+    .building:nth-child(1) { left: 5%; height: 80px; }
+    .building:nth-child(2) { left: 12%; height: 100px; }
+    .building:nth-child(3) { left: 20%; height: 70px; }
+    .building:nth-child(4) { left: 30%; height: 90px; }
+    .building:nth-child(5) { left: 40%; height: 60px; }
+    .building:nth-child(6) { left: 50%; height: 120px; }
+    .building:nth-child(7) { left: 60%; height: 80px; }
+    .building:nth-child(8) { left: 70%; height: 100px; }
+    .building:nth-child(9) { left: 80%; height: 60px; }
+    .building:nth-child(10) { left: 90%; height: 90px; }
+
+    .track-wrapper {
+      position: relative;
+      margin-top: 50px;
+      height: 220px;
+      width: 120vw;
+      left: -10vw;
+      overflow: visible;
+      z-index: 1;
+    }
+
+    .platform {
+      position: absolute;
+      bottom: 50px;
+      width: 120vw;
+      left: 0;
+      height: 20px;
+      background: #555;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+      z-index: 1;
+    }
+
+    .pillar {
+      position: absolute;
+      bottom: 0;
+      width: 12px;
+      height: 50px;
+      background: #333;
+      z-index: 0;
+    }
+    .pillar:nth-child(1) { left: 0vw; }
+    .pillar:nth-child(2) { left: 20vw; }
+    .pillar:nth-child(3) { left: 40vw; }
+    .pillar:nth-child(4) { left: 60vw; }
+    .pillar:nth-child(5) { left: 80vw; }
+    .pillar:nth-child(6) { left: 100vw; }
+    .pillar:nth-child(7) { left: 110vw; }
+
+    .rail-line {
+      position: absolute;
+      bottom: 70px;
+      height: 6px;
+      width: 120vw;
+      left: 0;
+      background: #bbb;
+      box-shadow: inset 0 2px 4px #999;
+    }
+    .rail-line.left { transform: translateY(0); }
+    .rail-line.right { transform: translateY(28px); }
+
+    .sleepers {
+      position: absolute;
+      bottom: 65px;
+      width: 120vw;
+      left: 0;
+      height: 40px;
+      background: repeating-linear-gradient(to right, transparent 0, transparent 80px, #777 80px, #777 100px);
+    }
+
+    .overhead-wire {
+      position: absolute;
+      top: 0;
+      width: 120vw;
+      left: 0;
+      height: 4px;
+      background: #ccc;
+    }
+
+  .train {
+    display: flex;
+    position: absolute;
+    bottom: 80px;
+    width: max-content;
+    animation: moveTrain 4s linear infinite; /* faster train */
+    filter: drop-shadow(0px 8px 20px rgba(0, 0, 0, 0.6));
+  }
+
+
+    @keyframes moveTrain {
+      from { transform: translateX(-110vw); }
+      to { transform: translateX(110vw); }
+    }
+
+    .coach {
+      width: 240px;
+      height: 100px;
+      background: linear-gradient(to bottom, #f1f1f1, #c9c9c9);
+      margin-right: 6px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(255,255,255,0.05);
+      position: relative;
+    }
+    .coach .door-left, .coach .door-right {
+      width: 50px;
+      height: 50px;
+      background: #00bcd4;
+      position: absolute;
+      top: 25px;
+    }
+    .coach .door-left { left: 15px; }
+    .coach .door-right { right: 15px; }
+    .coach .door-middle {
+      width: 40px;
+      height: 60px;
+      background: black;
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .coach .wheel {
+      position: absolute;
+      bottom: -12px;
+      width: 26px;
+      height: 26px;
+      background: black;
+      border-radius: 50%;
+    }
+    .coach .wheel.left { left: 20px; }
+    .coach .wheel.right { right: 20px; }
+
+    .front-coach {
+      width: 300px;
+      height: 100px;
+      background: linear-gradient(to bottom, #f5f5f5, #dcdcdc);
+      border-radius: 120px 15px 15px 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 6px;
+      position: relative;
+      overflow: hidden;
+      transform: rotateY(180deg);
+    }
+    .front-coach .wheel {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      background: black;
+      border-radius: 50%;
+      bottom: -14px;
+    }
+    .front-coach .wheel.left { left: 28px; }
+    .front-coach .wheel.right { right: 28px; }
+
+    .windshield {
+      width: 120px;
+      height: 45px;
+      background: #001f3f;
+      border-radius: 25px;
+      position: absolute;
+      left: 40px;
+      top: 25px;
+    }
+    .headlight {
+      position: absolute;
+      right: 15px;
+      bottom: 35px;
+      width: 22px;
+      height: 22px;
+      background: yellow;
+      border-radius: 50%;
+      box-shadow: 0 0 35px yellow;
+    }
+    .pantograph {
+      position: absolute;
+      width: 6px;
+      height: 30px;
+      background: #222;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .train::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -50%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(120deg, rgba(255,255,255,0.4), transparent);
+      animation: shine 2s infinite;
+    }
+
+    @keyframes shine {
+      from { left: -50%; }
+      to { left: 120%; }
+    }
+
+    .footer {
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      text-align: center;
+      margin-top: auto; /* push footer to bottom */
+      padding: 10px 0;
+    }
+
+    /* Tunnel */
+    .tunnel {
+      position: absolute;
+      bottom: 60px;
+      width: 100%;
+      height: 160px;
+      display: flex;
+      justify-content: space-between;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .tunnel-left, .tunnel-right {
+      position: relative;
+      width: 50%;
+      height: 100%;
+      background: #3a3a3a;
+      overflow: hidden;
+    }
+    .tunnel-left::before {
+      content: "";
+      position: absolute;
+      right: -40px;
+      top: 0;
+      width: 120%;
+      height: 100%;
+      background: #3a3a3a;
+      border-radius: 50% 0 0 50%;
+    }
+    .tunnel-right::before {
+      content: "";
+      position: absolute;
+      left: -40px;
+      top: 0;
+      width: 120%;
+      height: 100%;
+      background: #3a3a3a;
+      border-radius: 0 50% 50% 0;
+    }
+    .rock {
+      width: 10px;
+      height: 10px;
+      background: #5c5c5c;
+      border-radius: 50%;
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <div class="sky">
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+  </div>
+
+  <div class="city-skyline">
+    <div class="building"></div>
+    <div class="building"></div>
+    <div class="building"></div>
+    <div class="building"></div>
+    <div class="building"></div>
+    <div class="building"></div>
+    <div class="building"></div>
+    <div class="building"></div>
+    <div class="building"></div>
+    <div class="building"></div>
+  </div>
+
+  <div class="loading-container">
+    <h1 class="title">Kochi Metro Scheduling System</h1>
+    <p class="subtitle">AI-Driven Induction Planning</p>
+
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <p id="loading-text">Loading Metro Data... 0%</p>
+
+    <div class="track-wrapper">
+      <div class="tunnel">
+        <div class="tunnel-left">
+          <div class="rock" style="top: 30px; left: 40px;"></div>
+          <div class="rock" style="top: 70px; left: 80px;"></div>
+          <div class="rock" style="top: 50px; left: 120px;"></div>
+        </div>
+        <div class="tunnel-right">
+          <div class="rock" style="top: 20px; right: 40px;"></div>
+          <div class="rock" style="top: 60px; right: 90px;"></div>
+          <div class="rock" style="top: 90px; right: 130px;"></div>
+        </div>
+      </div>
+
+      <div class="platform"></div>
+
+      <div class="pillar"></div>
+      <div class="pillar"></div>
+      <div class="pillar"></div>
+      <div class="pillar"></div>
+      <div class="pillar"></div>
+      <div class="pillar"></div>
+      <div class="pillar"></div>
+
+      <div class="rail-line left"></div>
+      <div class="rail-line right"></div>
+      <div class="sleepers"></div>
+      <div class="overhead-wire"></div>
+
+      <div class="train">
+        <div class="coach">
+          <div class="door-left"></div>
+          <div class="door-middle"></div>
+          <div class="door-right"></div>
+          <div class="wheel left"></div>
+          <div class="wheel right"></div>
+        </div>
+        <div class="coach">
+          <div class="door-left"></div>
+          <div class="door-middle"></div>
+          <div class="door-right"></div>
+          <div class="wheel left"></div>
+          <div class="wheel right"></div>
+        </div>
+        <div class="coach">
+          <div class="door-left"></div>
+          <div class="door-middle"></div>
+          <div class="door-right"></div>
+          <div class="wheel left"></div>
+          <div class="wheel right"></div>
+        </div>
+        <div class="front-coach">
+          <div class="windshield"></div>
+          <div class="headlight"></div>
+          <div class="pantograph"></div>
+          <div class="wheel left"></div>
+          <div class="wheel right"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="footer">© 2024 Kochi Metro. All rights reserved.</p>
+
+  <script>
+    let progressBar = document.getElementById("progress");
+    let loadingText = document.getElementById("loading-text");
+    let progress = 0;
+
+    function loadProgress() {
+      if (progress < 100) {
+        progress++;
+        progressBar.style.width = progress + "%";
+        loadingText.textContent = `Loading Metro Data... ${progress}%`;
+        setTimeout(loadProgress, 40);
+      }
+    }
+
+    loadProgress();
+  </script>
+</body>
+</html>

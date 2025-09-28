@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kochi Metro Scheduling System</title>
+  <link rel="stylesheet" href="style3.css">
+</head>
+<body>
+  <!-- Sky -->
+  <div class="sky">
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="bird"></div>
+    <div class="bird"></div>
+    <div class="bird"></div>
+  </div>
+
+  <!-- City -->
+  <div class="city-skyline">
+    <div class="building"></div>
+    <div class="building"></div>
+    <div class="building"></div>
+    <div class="building"></div>
+    <div class="building"></div>
+    <div class="building"></div>
+    <div class="building"></div>
+    <div class="building"></div>
+    <div class="building"></div>
+    <div class="building"></div>
+  </div>
+
+  <div class="loading-container">
+    <h1 class="title">Kochi Metro Scheduling System</h1>
+    <p class="subtitle">AI-Driven Induction Planning</p>
+
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <p id="loading-text">Loading Metro Data... 0%</p>
+
+    <div class="track-wrapper">
+      <div class="platform"></div>
+      <div class="pillar"></div>
+      <div class="pillar"></div>
+      <div class="pillar"></div>
+      <div class="pillar"></div>
+      <div class="pillar"></div>
+      <div class="pillar"></div>
+      <div class="pillar"></div>
+      <div class="rail-line left"></div>
+      <div class="rail-line right"></div>
+      <div class="sleepers"></div>
+      <div class="overhead-wire"></div>
+
+      <div class="train">
+        <div class="coach">
+          <div class="door-left"></div>
+          <div class="door-middle"></div>
+          <div class="door-right"></div>
+          <div class="wheel left"></div>
+          <div class="wheel right"></div>
+        </div>
+        <div class="coach">
+          <div class="door-left"></div>
+          <div class="door-middle"></div>
+          <div class="door-right"></div>
+          <div class="wheel left"></div>
+          <div class="wheel right"></div>
+        </div>
+        <div class="coach">
+          <div class="door-left"></div>
+          <div class="door-middle"></div>
+          <div class="door-right"></div>
+          <div class="wheel left"></div>
+          <div class="wheel right"></div>
+        </div>
+        <div class="front-coach">
+          <div class="windshield"></div>
+          <div class="headlight"></div>
+          <div class="pantograph"></div>
+          <div class="wheel left"></div>
+          <div class="wheel right"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Road + Vehicles -->
+  <div class="road">
+    <div class="lane1">
+      <div class="car"></div>
+      <div class="car"></div>
+      <div class="car"></div>
+      <div class="bus"></div>
+      <div class="auto"></div>
+    </div>
+    <div class="lane2">
+      <div class="car"></div>
+      <div class="car"></div>
+      <div class="car"></div>
+      <div class="truck"></div>
+    </div>
+  </div>
+
+  <!-- <p class="footer">© 2025 Kochi Metro. All rights reserved.</p> -->
+
+  <script>
+    let progressBar=document.getElementById("progress");
+    let loadingText=document.getElementById("loading-text");
+    let progress=0;
+    function loadProgress(){
+      if(progress<100){
+        progress++;
+        progressBar.style.width=progress+"%";
+        loadingText.textContent=`Loading Metro Data... ${progress}%`;
+        setTimeout(loadProgress,40);
+      }
+    }
+    loadProgress();
+  </script>
+</body>
+</html>

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Realistic Bullet Metro Animation</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to top, #0f0c29, #302b63, #24243e);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+}
+
+/* Text */
+.title { font-size: 2rem; margin-bottom: 5px; color: white; }
+.subtitle { font-size: 1.2rem; margin-bottom: 20px; color: white; }
+
+/* Progress Bar */
+.progress-bar {
+  width: 80%;
+  height: 20px;
+  background: #dedbdb;
+  margin: 10px auto;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.progress {
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #2196f3, #00e5ff);
+  transition: width 0.3s;
+}
+#loading-text { color: white; font-size: 14px; }
+
+/* Sky with clouds */
+.sky {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -3;
+}
+.cloud {
+  position: absolute;
+  background: #fff;
+  width: 120px;
+  height: 50px;
+  border-radius: 60px;
+  opacity: 0.15;
+  animation: cloudMove linear infinite;
+}
+.cloud:nth-child(1) { top: 20%; left: -150px; animation-duration: 80s; }
+.cloud:nth-child(2) { top: 35%; left: -200px; animation-duration: 100s; }
+.cloud:nth-child(3) { top: 50%; left: -250px; animation-duration: 120s; }
+
+@keyframes cloudMove {
+  from { transform: translateX(0); }
+  to { transform: translateX(200vw); }
+}
+
+/* City skyline background */
+.city-skyline {
+  position: absolute;
+  bottom: 50px;
+  width: 100%;
+  height: 150px;
+  background: linear-gradient(to top, #111, transparent);
+  z-index: -2;
+}
+.building {
+  position: absolute;
+  bottom: 0;
+  width: 20px;
+  height: 60px;
+  background: #222;
+}
+.building:nth-child(1) { left: 5%; height: 80px; }
+.building:nth-child(2) { left: 12%; height: 100px; }
+.building:nth-child(3) { left: 20%; height: 70px; }
+.building:nth-child(4) { left: 30%; height: 90px; }
+.building:nth-child(5) { left: 40%; height: 60px; }
+.building:nth-child(6) { left: 50%; height: 120px; }
+.building:nth-child(7) { left: 60%; height: 80px; }
+.building:nth-child(8) { left: 70%; height: 100px; }
+.building:nth-child(9) { left: 80%; height: 60px; }
+.building:nth-child(10) { left: 90%; height: 90px; }
+
+/* Track wrapper elevated */
+.track-wrapper {
+  position: relative;
+  margin-top: 50px;
+  height: 220px;
+  width: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Elevated platform */
+.platform {
+  position: absolute;
+  bottom: 50px;
+  width: 100%;
+  height: 20px;
+  background: #555;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+  z-index: 1;
+}
+
+/* Support pillars */
+.pillar {
+  position: absolute;
+  bottom: 0;
+  width: 12px;
+  height: 50px;
+  background: #333;
+  z-index: 0;
+}
+.pillar:nth-child(1) { left: 0%; }
+.pillar:nth-child(2) { left: 20%; }
+.pillar:nth-child(3) { left: 40%; }
+.pillar:nth-child(4) { left: 60%; }
+.pillar:nth-child(5) { left: 80%; }
+
+/* Rails & sleepers */
+.rail-line {
+  position: absolute;
+  bottom: 70px;
+  height: 6px;
+  width: 100%;
+  background: #bbb;
+  box-shadow: inset 0 2px 4px #999;
+}
+.rail-line.left { transform: translateY(0); }
+.rail-line.right { transform: translateY(28px); }
+
+.sleepers {
+  position: absolute;
+  bottom: 65px;
+  width: 100%;
+  height: 40px;
+  background: repeating-linear-gradient(
+    to right,
+    transparent 0,
+    transparent 80px,
+    #777 80px,
+    #777 100px
+  );
+}
+
+.overhead-wire {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 4px;
+  background: #ccc;
+}
+
+/* Train container */
+.train {
+  display: flex;
+  position: absolute;
+  bottom: 80px;
+  animation: moveTrain 6s linear infinite;
+  filter: drop-shadow(0px 8px 20px rgba(0,0,0,0.6));
+}
+
+@keyframes moveTrain {
+  from { transform: translateX(-180%); }
+  to { transform: translateX(180%); }
+}
+
+/* Coaches */
+.coach {
+  width: 240px;
+  height: 100px;
+  background: linear-gradient(to bottom, #f1f1f1, #c9c9c9);
+  margin-right: 6px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(255,255,255,0.05);
+  position: relative;
+}
+/* Doors */
+.coach .door-left, .coach .door-right {
+  width: 40px;
+  height: 60px;
+  background: #00bcd4;
+  position: absolute;
+  top: 20px;
+}
+.coach .door-left { left: 15px; }
+.coach .door-right { right: 15px; }
+.coach .door-middle {
+  width: 40px;
+  height: 60px;
+  background: black;
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+/* Wheels - Bigger */
+.coach .wheel {
+  position: absolute;
+  bottom: -12px;
+  width: 28px;
+  height: 28px;
+  background: black;
+  border-radius: 50%;
+}
+.coach .wheel.left { left: 20px; }
+.coach .wheel.right { right: 20px; }
+
+/* Oval Front Coach with sharper nose and bigger wheels */
+.front-coach {
+  width: 300px;
+  height: 100px;
+  background: linear-gradient(to bottom, #f5f5f5, #dcdcdc);
+  border-radius: 120px 15px 15px 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+  position: relative;
+  overflow: hidden;
+  transform: rotateY(180deg);
+}
+.front-coach .wheel {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  background: black;
+  border-radius: 50%;
+  bottom: -16px;
+}
+.front-coach .wheel.left { left: 28px; }
+.front-coach .wheel.right { right: 28px; }
+
+.windshield {
+  width: 120px;
+  height: 45px;
+  background: #001f3f;
+  border-radius: 25px;
+  position: absolute;
+  left: 40px;
+  top: 25px;
+}
+.headlight {
+  position: absolute;
+  right: 15px;
+  bottom: 35px;
+  width: 22px;
+  height: 22px;
+  background: yellow;
+  border-radius: 50%;
+  box-shadow: 0 0 35px yellow;
+}
+.pantograph {
+  position: absolute;
+  width: 6px;
+  height: 30px;
+  background: #222;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Shine effect */
+.train::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.4), transparent);
+  animation: shine 2s infinite;
+}
+@keyframes shine {
+  from { left: -50%; }
+  to { left: 120%; }
+}
+
+/* Footer */
+.footer { margin-top: 10px; font-size: 16px; font-weight: bold; color: white; }
+</style>
+</head>
+<body>
+
+<div class="sky">
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+</div>
+
+<div class="city-skyline">
+  <div class="building"></div>
+  <div class="building"></div>
+  <div class="building"></div>
+  <div class="building"></div>
+  <div class="building"></div>
+  <div class="building"></div>
+  <div class="building"></div>
+  <div class="building"></div>
+  <div class="building"></div>
+  <div class="building"></div>
+</div>
+
+<div class="loading-container">
+  <h1 class="title">Kochi Metro Scheduling System</h1>
+  <p class="subtitle">AI-Driven Induction Planning</p>
+
+  <div class="progress-bar">
+    <div class="progress" id="progress"></div>
+  </div>
+  <p id="loading-text">Loading Metro Data... 0%</p> 
+
+  <div class="track-wrapper">
+    <div class="platform"></div>
+    <div class="pillar"></div>
+    <div class="pillar"></div>
+    <div class="pillar"></div>
+    <div class="pillar"></div>
+    <div class="pillar"></div>
+
+    <div class="rail-line left"></div>
+    <div class="rail-line right"></div>
+    <div class="sleepers"></div>
+    <div class="overhead-wire"></div>
+
+    <div class="train">
+      <div class="coach">
+        <div class="door-left"></div>
+        <div class="door-middle"></div>
+        <div class="door-right"></div>
+        <div class="wheel left"></div>
+        <div class="wheel right"></div>
+      </div>
+      <div class="coach">
+        <div class="door-left"></div>
+        <div class="door-middle"></div>
+        <div class="door-right"></div>
+        <div class="wheel left"></div>
+        <div class="wheel right"></div>
+      </div>
+      <div class="coach">
+        <div class="door-left"></div>
+        <div class="door-middle"></div>
+        <div class="door-right"></div>
+        <div class="wheel left"></div>
+        <div class="wheel right"></div>
+      </div>
+
+      <div class="front-coach">
+        <div class="windshield"></div>
+        <div class="headlight"></div>
+        <div class="pantograph"></div>
+        <div class="wheel left"></div>
+        <div class="wheel right"></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="footer">Version 1.0 Powered by AI</p>
+  <p class="footer">Kochi Metro Rail Limited</p>
+</div>
+
+<script>
+let progress = document.getElementById("progress");
+let loadingText = document.getElementById("loading-text");
+let percent = 0;
+let interval = setInterval(() => {
+  if(percent<100){
+    percent++;
+    progress.style.width = percent+"%";
+    loadingText.textContent = "Loading Metro Data... "+percent+"%";
+  }else{
+    clearInterval(interval);
+    loadingText.textContent = "Metro Data Loaded!";
+  }
+},60);
+</script>
+
+</body>
+</html>
